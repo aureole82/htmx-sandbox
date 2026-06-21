@@ -30,7 +30,7 @@
     <tbody>
     @foreach (var item in Model)
     {
-        <tr>
+        <tr id="post@(item.Id)">
             <td>
                 @Html.DisplayFor(model => item.Title)
             </td>
@@ -45,10 +45,52 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a class="btn btn-danger btn-sm"
+                   data-bs-toggle="modal" data-bs-target="#post-modal"
+                   hx-get="@Url.Action("Delete", new { item.Id })"
+                   hx-indicator="#post-modal .modal-body, #post-modal-footer-outlet">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+<style>
+    /* Collapse spinner completely if no request is running at the moment. */
+    #post-modal .htmx-indicator { display: none; }
+
+    /* Show spinner if no request is running at the moment. */
+
+    #post-modal .htmx-request > .htmx-indicator { display: block; }
+
+    /* Hide everything but the spinner if a request is running at the moment. */
+
+    #post-modal .htmx-request > *:not(.htmx-indicator) { display: none; }
+</style>
+
+<!-- Multipurpose post modal. -->
+<div class="modal fade" id="post-modal" tabindex="-1" aria-labelledby="post-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="post-modal-label">Post Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="htmx-indicator text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="post-modal-body-outlet"></div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Cancel</button>
+                <div id="post-modal-footer-outlet"></div>
+            </div>
+        </div>
+    </div>
+</div>

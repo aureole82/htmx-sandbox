@@ -104,13 +104,12 @@ public class PostsController(PostsDbContext db) : Controller
             return NotFound();
         }
 
-        return View(stored);
+        return PartialView("_Delete", stored);
     }
 
-    // POST: Posts/Delete/5
-    [HttpPost]
+    // DELETE: Posts/Delete/5
+    [HttpDelete]
     [ActionName("Delete")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         // Fire and forget deletion: No need to call SaveChanges().
@@ -123,7 +122,7 @@ public class PostsController(PostsDbContext db) : Controller
             return NotFound();
         }
 
-        return RedirectToAction(nameof(Index));
+        return Ok(); // Don't return NoContent() [204] → hx-swap="delete" won't work!
     }
 }
 

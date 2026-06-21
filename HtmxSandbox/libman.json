@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "3.0",
   "defaultProvider": "cdnjs",
   "libraries": [
@@ -19,6 +19,14 @@
         "font/bootstrap-icons.min.css",
         "font/fonts/bootstrap-icons.woff",
         "font/fonts/bootstrap-icons.woff2"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "htmx.org@4.0.0-beta4",
+      "destination": "wwwroot/lib/htmx.org/",
+      "files": [
+        "dist/htmx.js"
       ]
     }
   ]
