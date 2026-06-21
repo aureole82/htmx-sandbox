@@ -1,0 +1,43 @@
+﻿@model DbPost
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<h4>Post</h4>
+<hr/>
+<div class="row">
+    <div class="col-lg-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="invalid-feedback"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" asp-validation="Title" class="form-control"/>
+                <span asp-validation-for="Title" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content" asp-validation="Content" class="form-control"></textarea>
+                <span asp-validation-for="Content" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Author" class="form-label"></label>
+                <input asp-for="Author" asp-validation="Author" class="form-control" />
+                <span asp-validation-for="Author" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

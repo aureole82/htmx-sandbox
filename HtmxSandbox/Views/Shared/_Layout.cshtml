@@ -22,7 +22,7 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Posts" asp-action="Index">Posts</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -54,7 +54,7 @@
     </main>
 </div>
 
-<footer class="fixed-bottom border-top text-muted py-1">
+<footer class="fixed-bottom border-top text-muted py-1 bg-body-tertiary">
     <div class="container">
         &copy; 2026 - HtmxSandbox - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
@@ -80,7 +80,6 @@
 
     setTheme();
     window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => setTheme());
-
 </script>
 
 @await RenderSectionAsync("Scripts", required: false)
