@@ -32,8 +32,9 @@
 <hx-partial hx-target="#post-modal-footer-outlet">
     <button class="btn btn-danger" data-bs-dismiss="modal"
             hx-delete="@Url.Action("Delete", new { Model.Id })"
-            hx-target="#post@(Model.Id)"
-            hx-swap="delete">
+            hx-on::after:request="document.getElementById('post-details@(Model.Id)')?.closest('tr')?.remove()"
+            hx-swap="delete"
+            hx-target="#post@(Model.Id)">
         <i class="bi bi-trash"></i> Delete
     </button>
 </hx-partial>

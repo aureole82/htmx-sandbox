@@ -23,7 +23,7 @@ public class PostsController(PostsDbContext db) : Controller
             return NotFound();
         }
 
-        return View(stored);
+        return PartialView("_Details", stored);
     }
 
     // GET: Posts/Create
