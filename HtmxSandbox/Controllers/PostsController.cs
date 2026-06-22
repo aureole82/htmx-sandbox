@@ -7,35 +7,22 @@ namespace HtmxSandbox.Controllers;
 
 public class PostsController(PostsDbContext db) : Controller
 {
-    // GET: Posts
+    /// <summary> Returns the list of all posts. </summary>
+    [HttpGet] // GET Posts
     public async Task<IActionResult> Index()
     {
         return View(await db.Posts.OrderByDescending(post => post.Created).ToListAsync());
     }
 
-    // GET: Posts/Details/5
-    public async Task<IActionResult> Details(int id)
-    {
-        var stored = await db.Posts
-            .FirstOrDefaultAsync(post => post.Id == id);
-        if (stored == null)
-        {
-            return NotFound();
-        }
-
-        return PartialView("_Details", stored);
-    }
-
-    // GET: Posts/Create
+    /// <summary> Returns the create form for a new post. </summary>
+    [HttpGet] // GET Posts/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Posts/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
+    /// <summary> Creates the passed post with the allowed values. </summary>
+    [HttpPost] // POST Posts/Create
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Title,Content,Author")] DbPost post)
     {
@@ -49,7 +36,54 @@ public class PostsController(PostsDbContext db) : Controller
         return View(post);
     }
 
-    // GET: Posts/Edit/5
+    /// <summary> Returns the delete confirmation dialog for the requested post. </summary>
+    [HttpGet] // GET Posts/Delete/5
+    public async Task<IActionResult> Delete(int id)
+    {
+        var stored = await db.Posts
+            .FirstOrDefaultAsync(post => post.Id == id);
+        if (stored == null)
+        {
+            return NotFound();
+        }
+
+        return PartialView("_Delete", stored);
+    }
+
+    /// <summary> Deletes the request post finally in a fire-and-forget manner. </summary>
+    [HttpDelete] // DELETE Posts/Delete/5
+    [ActionName("Delete")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        // Fire and forget deletion: No need to call SaveChanges().
+        var count = await db.Posts
+                .Where(post => post.Id == id)
+                .ExecuteDeleteAsync()
+            ;
+        if (count == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(); // Don't return NoContent() [204] → hx-swap="delete" won't work!
+    }
+
+    /// <summary> Returns the details view for the requested post. </summary>
+    [HttpGet] // GET Posts/Details/5
+    public async Task<IActionResult> Details(int id)
+    {
+        var stored = await db.Posts
+            .FirstOrDefaultAsync(post => post.Id == id);
+        if (stored == null)
+        {
+            return NotFound();
+        }
+
+        return PartialView("_Details", stored);
+    }
+
+    /// <summary> Returns the edit form for the requested post. </summary>
+    [HttpGet] // GET Posts/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
         var model = await db.Posts
@@ -67,14 +101,11 @@ public class PostsController(PostsDbContext db) : Controller
             return NotFound();
         }
 
-        return View(model);
+        return PartialView("_Edit", model);
     }
 
-    // POST: Posts/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
+    /// <summary> Updates the requested post only with the changeable values. </summary>
+    [HttpPost] // POST Posts/Edit/5
     public async Task<IActionResult> Edit(int id, [Bind("Title,Content,Author")] PostRequest post)
     {
         if (ModelState.IsValid)
@@ -88,41 +119,17 @@ public class PostsController(PostsDbContext db) : Controller
             db.Entry(stored).CurrentValues.SetValues(post);
             await db.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return PartialView("_PostRow", stored);
         }
 
-        return View(post);
+        return PartialView("_Edit", post);
     }
 
-    // GET: Posts/Delete/5
-    public async Task<IActionResult> Delete(int id)
+    /// <summary> Validates the edited post (e.g. on each keyup) without persisting any changes. </summary>
+    [HttpPost] // POST Posts/Validate/5
+    public IActionResult Validate(int id, [Bind("Title,Content,Author")] PostRequest post)
     {
-        var stored = await db.Posts
-            .FirstOrDefaultAsync(post => post.Id == id);
-        if (stored == null)
-        {
-            return NotFound();
-        }
-
-        return PartialView("_Delete", stored);
-    }
-
-    // DELETE: Posts/Delete/5
-    [HttpDelete]
-    [ActionName("Delete")]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        // Fire and forget deletion: No need to call SaveChanges().
-        var count = await db.Posts
-                .Where(post => post.Id == id)
-                .ExecuteDeleteAsync()
-            ;
-        if (count == 0)
-        {
-            return NotFound();
-        }
-
-        return Ok(); // Don't return NoContent() [204] → hx-swap="delete" won't work!
+        return PartialView("_Edit", post);
     }
 }
 

@@ -1,0 +1,46 @@
+﻿@model DbPost
+
+<tr id="post@(Model.Id)">
+    <td>@Html.DisplayFor(model => Model.Title)</td>
+    <td>@Html.DisplayFor(model => Model.Content)</td>
+    <td>@Html.DisplayFor(model => Model.Author)</td>
+    <td>@Html.DisplayFor(model => Model.Created)</td>
+    <td>
+        <a class="btn btn-primary btn-sm"
+           data-bs-toggle="modal" data-bs-target="#post-modal"
+           hx-get="@Url.Action("Edit", new { id = Model.Id })"
+           hx-indicator="#post-modal .modal-body, #post-modal-footer-outlet">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <button class="btn btn-secondary btn-sm collapse-toggle"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#post-details@(Model.Id)"
+                aria-expanded="false">
+            <i class="bi bi-arrow-down-square"></i>
+            <i class="bi bi-arrow-up-square"></i>
+            Details
+        </button>
+        <a class="btn btn-danger btn-sm"
+           data-bs-toggle="modal" data-bs-target="#post-modal"
+           hx-get="@Url.Action("Delete", new { id = Model.Id })"
+           hx-indicator="#post-modal .modal-body, #post-modal-footer-outlet">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+    </td>
+</tr>
+<tr>
+    <td colspan="5" class="bg-body-tertiary p-0 border-0">
+        <div id="post-details@(Model.Id)"
+             class="collapse m-2"
+             hx-get="@Url.Action("Details", new { id = Model.Id })"
+             hx-trigger="shown.bs.collapse once"
+             hx-swap="innerHTML">
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>

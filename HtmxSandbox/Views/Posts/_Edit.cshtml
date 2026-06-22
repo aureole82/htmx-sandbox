@@ -1,0 +1,49 @@
+﻿@model HtmxSandbox.Controllers.PostRequest
+@{
+    var id = ViewContext.RouteData.Values["id"];
+}
+
+<hx-partial hx-target="#post-modal-body-outlet" hx-swap="innerMorph"> @* Same like outerHTML but with morphing instead of replacing. *@
+    <form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" asp-validation="Title" class="form-control"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-post="@Url.Action("Validate", new { id })"
+                   hx-include="closest form" @* Tells HTMX to send the entire form to Validate endpoint. *@
+                   /> 
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" asp-validation="Content" class="form-control"
+                      hx-trigger="keyup changed delay:500ms"
+                      hx-post="@Url.Action("Validate", new { id })"
+                      hx-include="closest form"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Author" class="form-label"></label>
+            <input asp-for="Author" asp-validation="Author" class="form-control"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-post="@Url.Action("Validate", new { id })"
+                   hx-include="closest form"
+                   />
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+    </form>
+</hx-partial>
+<hx-partial hx-target="#post-modal-footer-outlet">
+    <button class="btn btn-primary" data-bs-dismiss="modal"
+            hx-post="@Url.Action("Edit", new { id })"
+            hx-include="#post-modal-body-outlet"
+            hx-swap="outerHTML"
+            hx-target="#post@(id)"
+            hx-on::before:request="document.getElementById('post-details@(id)')?.closest('tr')?.remove()">
+        <i class="bi bi-save"></i> Save
+    </button>
+</hx-partial>
