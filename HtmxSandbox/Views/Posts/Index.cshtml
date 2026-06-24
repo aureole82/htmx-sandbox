@@ -41,10 +41,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
-    {
-        @await Html.PartialAsync("_PostRow", item)
-    }
+        @await Html.PartialAsync("_PostPage", Model)
     </tbody>
 </table>
 

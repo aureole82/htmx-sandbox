@@ -8,10 +8,26 @@ namespace HtmxSandbox.Controllers;
 public class PostsController(PostsDbContext db) : Controller
 {
     /// <summary> Returns the list of all posts. </summary>
-    [HttpGet] // GET Posts
-    public async Task<IActionResult> Index()
+    [HttpGet] // GET Posts?page=2
+    public async Task<IActionResult> Index(int page = 1)
     {
-        return View(await db.Posts.OrderByDescending(post => post.Created).ToListAsync());
+        const int pageSize = 20;
+        var totalPosts = await db.Posts.CountAsync();
+
+        var posts = await db.Posts
+            .OrderByDescending(post => post.Created)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        ViewBag.NextPage = page * pageSize < totalPosts
+            ? page + 1
+            : (int?)null;
+
+        return Request.Query.ContainsKey("page")
+                ? PartialView("_PostPage", posts) // page=2 → partial page load.
+                : View(posts) // Initial page load.
+            ;
     }
 
     /// <summary> Returns the create form for a new post. </summary>
