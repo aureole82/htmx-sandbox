@@ -5,11 +5,10 @@
 </hx-partial>
 <hx-partial hx-target="#post-modal-footer-outlet">
     <button class="btn btn-primary" data-bs-dismiss="modal"
-            hx-post="@Url.Action("Edit", new { id = Model.Id })"
+            hx-post="@Url.Action("Create")"
             hx-include="#post-modal-body-outlet"
-            hx-swap="outerHTML"
-            hx-target="#post@(Model.Id)"
-            hx-on::before:request="document.getElementById('post-details@(Model.Id)')?.closest('tr')?.remove()">
-        <i class="bi bi-save"></i> Save
+            hx-swap="afterbegin"
+            hx-target="tbody">
+        <i class="bi bi-plus-square"></i> Add
     </button>
 </hx-partial>

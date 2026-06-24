@@ -22,7 +22,13 @@
 <h1>@ViewBag.Title</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <button class="btn btn-info btn-sm"
+            type="button"
+            data-bs-toggle="modal" data-bs-target="#post-modal"
+            hx-get="@Url.Action("Create")"
+            hx-indicator="#post-modal .modal-body, #post-modal-footer-outlet">
+        <i class="bi bi-plus-square"></i> Create New
+    </button>
 </p>
 <table class="table">
     <thead>

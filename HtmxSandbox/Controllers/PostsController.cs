@@ -18,22 +18,27 @@ public class PostsController(PostsDbContext db) : Controller
     [HttpGet] // GET Posts/Create
     public IActionResult Create()
     {
-        return View();
+        return PartialView("_Create", new PostRequest { Title = string.Empty, Author = string.Empty });
     }
 
     /// <summary> Creates the passed post with the allowed values. </summary>
     [HttpPost] // POST Posts/Create
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Title,Content,Author")] DbPost post)
+    public async Task<IActionResult> Create([Bind("Title,Content,Author")] PostRequest post)
     {
         if (ModelState.IsValid)
         {
-            db.Add(post);
+            var stored = new DbPost
+            {
+                Title = post.Title,
+                Content = post.Content,
+                Author = post.Author
+            };
+            db.Add(stored);
             await db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return PartialView("_PostRow", stored);
         }
 
-        return View(post);
+        return PartialView("_Create", post);
     }
 
     /// <summary> Returns the delete confirmation dialog for the requested post. </summary>
@@ -90,6 +95,7 @@ public class PostsController(PostsDbContext db) : Controller
                 .Where(post => post.Id == id)
                 .Select(post => new PostRequest
                 {
+                    Id = post.Id,
                     Title = post.Title,
                     Content = post.Content,
                     Author = post.Author
@@ -116,6 +122,7 @@ public class PostsController(PostsDbContext db) : Controller
                 return NotFound();
             }
 
+            post.Id = id;
             db.Entry(stored).CurrentValues.SetValues(post);
             await db.SaveChangesAsync();
 
@@ -126,18 +133,17 @@ public class PostsController(PostsDbContext db) : Controller
     }
 
     /// <summary> Validates the edited post (e.g. on each keyup) without persisting any changes. </summary>
-    [HttpPost] // POST Posts/Validate/5
-    public IActionResult Validate(int id, [Bind("Title,Content,Author")] PostRequest post)
+    [HttpPost] // POST Posts/Validate
+    public IActionResult Validate([Bind("Id,Title,Content,Author")] PostRequest post)
     {
-        return PartialView("_Edit", post);
+        return PartialView(post.Id is null ? "_Create" : "_Edit", post);
     }
 }
 
 public record PostRequest
 {
+    public int? Id { get; set; } // null for new posts, otherwise the existing post's primary key.
     [StringLength(120)] public required string Title { get; set; }
-
     public string? Content { get; set; }
-
     [StringLength(80, MinimumLength = 3)] public required string Author { get; set; }
 }
