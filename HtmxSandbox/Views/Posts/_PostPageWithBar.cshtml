@@ -1,0 +1,8 @@
+﻿@model PageModel<DbPost>
+
+<hx-partial hx-target="tbody" hx-swap="innerHTML">
+    @await Html.PartialAsync("_PostPage", Model)
+</hx-partial>
+<hx-partial hx-target="#paging-bar" hx-swap="outerHTML">
+    @await Html.PartialAsync("_PagingBar", Model)
+</hx-partial>

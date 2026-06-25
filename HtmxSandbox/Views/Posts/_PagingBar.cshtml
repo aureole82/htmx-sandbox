@@ -1,0 +1,50 @@
+﻿@model PageModel<DbPost>
+
+@{
+    const uint windowSize = 2; // Number of pages to show on each side of the current page.
+    var current = Model.Number;
+    var last = Model.Last;
+    var windowStart = current > windowSize ? (int)(current - windowSize) : 0;
+    var windowEnd = current + windowSize < last ? (int)(current + windowSize) : (int)last;
+    int?[] windowPages =
+    [
+        ..windowStart > 0 ? new int?[] { null } : [],
+        ..Enumerable.Range(windowStart, windowEnd - windowStart + 1),
+        ..windowEnd < last ? new int?[] { null } : []
+    ];
+}
+
+<div id="paging-bar" class="btn-group" role="group" aria-label="Posts paging">
+    <button type="button" class="btn btn-outline-primary" aria-label="First page"
+            disabled="@Model.IsFirst"
+            hx-get="@Url.Action("Index", new { page = 0u })">
+        <i class="bi bi-chevron-bar-left"></i>
+    </button>
+    <button type="button" class="btn btn-outline-primary" aria-label="Previous page"
+            disabled="@Model.IsFirst"
+            hx-get="@Url.Action("Index", new { page = Model.IsFirst ? 0u : current - 1 })">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+
+    @foreach (var page in windowPages)
+    {
+        var url = page is null || page == current ? null : Url.Action("Index", new { page });
+
+        <button type="button" class="btn btn-@(page == current ? "" : "outline-")primary"
+                @(url is null ? "disabled" : "")
+                @(url is null ? "" : $"hx-get={url}")>
+            @(page is null ? "…" : $"{page + 1}")
+        </button>
+    }
+
+    <button type="button" class="btn btn-outline-primary" aria-label="Next page"
+            disabled="@Model.IsLast"
+            hx-get="@Url.Action("Index", new { page = Model.IsLast ? last : current + 1 })">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+    <button type="button" class="btn btn-outline-primary" aria-label="Last page"
+            disabled="@Model.IsLast"
+            hx-get="@Url.Action("Index", new { page = last })">
+        <i class="bi bi-chevron-bar-right"></i>
+    </button>
+</div>

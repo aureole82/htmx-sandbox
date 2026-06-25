@@ -7,26 +7,32 @@ namespace HtmxSandbox.Controllers;
 
 public class PostsController(PostsDbContext db) : Controller
 {
+    private const string PageQuery = "page";
+
     /// <summary> Returns the list of all posts. </summary>
     [HttpGet] // GET Posts?page=2
-    public async Task<IActionResult> Index(int page = 1)
+    public async Task<IActionResult> Index([FromQuery(Name = PageQuery)] uint pageIndex)
     {
-        const int pageSize = 20;
         var totalPosts = await db.Posts.CountAsync();
 
+        var page = new PageModel<DbPost>
+        {
+            Total = (uint)totalPosts
+        };
+
         var posts = await db.Posts
-            .OrderByDescending(post => post.Created)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+                .OrderByDescending(post => post.Created)
+                .Skip((int)(pageIndex * page.Size))
+                .Take((int)page.Size)
+                .ToListAsync()
+            ;
 
-        ViewBag.NextPage = page * pageSize < totalPosts
-            ? page + 1
-            : (int?)null;
+        page.Items = posts;
+        page.Number = pageIndex;
 
-        return Request.Query.ContainsKey("page")
-                ? PartialView("_PostPage", posts) // page=2 → partial page load.
-                : View(posts) // Initial page load.
+        return Request.Query.ContainsKey(PageQuery)
+                ? PartialView("_PostPageWithBar", page) // pageIndex=1 → partial page load.
+                : View(page) // Initial page load.
             ;
     }
 

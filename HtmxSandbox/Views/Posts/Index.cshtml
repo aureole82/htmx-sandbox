@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DbPost>
+﻿@model PageModel<DbPost>
 
 @{
     ViewBag.Title = "All Posts";
@@ -6,17 +6,13 @@
 
 <style>
     /* Start state: The ↑ icon must disappear. */
-    .collapse-toggle .bi-arrow-up-square {
-        display: none;
-    }
+    .collapse-toggle .bi-arrow-up-square { display: none; }
 
     /* Open state: Show ↑ icon (close), hide ↓ icon (open). */
-    .collapse-toggle[aria-expanded="true"] .bi-arrow-down-square {
-        display: none;
-    }
-    .collapse-toggle[aria-expanded="true"] .bi-arrow-up-square {
-        display: inline;
-    }
+
+    .collapse-toggle[aria-expanded="true"] .bi-arrow-down-square { display: none; }
+
+    .collapse-toggle[aria-expanded="true"] .bi-arrow-up-square { display: inline; }
 </style>
 
 <h1>@ViewBag.Title</h1>
@@ -33,18 +29,20 @@
 <table class="table">
     <thead>
     <tr>
-        <th>@Html.DisplayNameFor(model => model.Title)</th>
-        <th>@Html.DisplayNameFor(model => model.Content)</th>
-        <th>@Html.DisplayNameFor(model => model.Author)</th>
-        <th>@Html.DisplayNameFor(model => model.Created)</th>
+        <th>@Html.DisplayNameFor(model => model.Items.First().Title)</th>
+        <th>@Html.DisplayNameFor(model => model.Items.First().Content)</th>
+        <th>@Html.DisplayNameFor(model => model.Items.First().Author)</th>
+        <th>@Html.DisplayNameFor(model => model.Items.First().Created)</th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-        @await Html.PartialAsync("_PostPage", Model)
+    @await Html.PartialAsync("_PostPage", Model)
     </tbody>
 </table>
-
+<div class="text-center">
+    @await Html.PartialAsync("_PagingBar", Model)
+</div>
 <style>
     /* Collapse spinner completely if no request is running at the moment. */
     #post-modal .htmx-indicator { display: none; }
