@@ -13,6 +13,11 @@
     .collapse-toggle[aria-expanded="true"] .bi-arrow-down-square { display: none; }
 
     .collapse-toggle[aria-expanded="true"] .bi-arrow-up-square { display: inline; }
+
+
+    /* All table headers should align even on different heights. */
+
+    th { vertical-align: top; }
 </style>
 
 <h1>@ViewBag.Title</h1>
@@ -29,9 +34,18 @@
 <table class="table">
     <thead>
     <tr>
-        <th>@Html.DisplayNameFor(model => model.Items.First().Title)</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Items.First().Title)
+        </th>
         <th>@Html.DisplayNameFor(model => model.Items.First().Content)</th>
-        <th>@Html.DisplayNameFor(model => model.Items.First().Author)</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Items.First().Author)<br/>
+            <input class="form-control form-control-sm"
+                   name="author"
+                   type="text"
+                   hx-get="@Url.Action("Index")"
+                   hx-trigger="keyup[keyCode==13], keyup changed delay:500ms">
+        </th>
         <th>@Html.DisplayNameFor(model => model.Items.First().Created)</th>
         <th></th>
     </tr>

@@ -11,16 +11,25 @@ public class PostsController(PostsDbContext db) : Controller
 
     /// <summary> Returns the list of all posts. </summary>
     [HttpGet] // GET Posts?page=2
-    public async Task<IActionResult> Index([FromQuery(Name = PageQuery)] uint pageIndex)
+    public async Task<IActionResult> Index([FromQuery(Name = PageQuery)] uint pageIndex, string? author = null)
     {
-        var totalPosts = await db.Posts.CountAsync();
+        var isCallback = Request.Query.ContainsKey(PageQuery);
+
+        IQueryable<DbPost> query = db.Posts;
+        if (!string.IsNullOrEmpty(author))
+        {
+            isCallback = true;
+            query = query.Where(post => post.Author.Contains(author));
+        }
+
+        var totalPosts = await query.CountAsync();
 
         var page = new PageModel<DbPost>
         {
             Total = (uint)totalPosts
         };
 
-        var posts = await db.Posts
+        var posts = await query
                 .OrderByDescending(post => post.Created)
                 .Skip((int)(pageIndex * page.Size))
                 .Take((int)page.Size)
@@ -30,7 +39,7 @@ public class PostsController(PostsDbContext db) : Controller
         page.Items = posts;
         page.Number = pageIndex;
 
-        return Request.Query.ContainsKey(PageQuery)
+        return isCallback
                 ? PartialView("_PostPageWithBar", page) // pageIndex=1 → partial page load.
                 : View(page) // Initial page load.
             ;

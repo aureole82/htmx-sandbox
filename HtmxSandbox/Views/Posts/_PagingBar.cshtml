@@ -32,7 +32,8 @@
 
         <button type="button" class="btn btn-@(page == current ? "" : "outline-")primary"
                 @(url is null ? "disabled" : "")
-                @(url is null ? "" : $"hx-get={url}")>
+                @(url is null ? "" : $"hx-get={url}")
+                hx-include="input[name=author]">
             @(page is null ? "…" : $"{page + 1}")
         </button>
     }
