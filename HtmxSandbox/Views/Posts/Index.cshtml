@@ -35,15 +35,30 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Items.First().Title)
+            @Html.DisplayNameFor(model => model.Items.First().Title)<br/>
+            <input class="form-control form-control-sm"
+                   name="title"
+                   type="text"
+                   hx-get="@Url.Action("Index")"
+                   hx-include="closest thead"
+                   hx-trigger="keyup[keyCode==13], keyup changed delay:500ms">
         </th>
-        <th>@Html.DisplayNameFor(model => model.Items.First().Content)</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Items.First().Content)<br/>
+            <input class="form-control form-control-sm"
+                   name="content"
+                   type="text"
+                   hx-get="@Url.Action("Index")"
+                   hx-include="closest thead"
+                   hx-trigger="keyup[keyCode==13], keyup changed delay:500ms">
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.Items.First().Author)<br/>
             <input class="form-control form-control-sm"
                    name="author"
                    type="text"
                    hx-get="@Url.Action("Index")"
+                   hx-include="closest thead"
                    hx-trigger="keyup[keyCode==13], keyup changed delay:500ms">
         </th>
         <th>@Html.DisplayNameFor(model => model.Items.First().Created)</th>

@@ -11,11 +11,25 @@ public class PostsController(PostsDbContext db) : Controller
 
     /// <summary> Returns the list of all posts. </summary>
     [HttpGet] // GET Posts?page=2
-    public async Task<IActionResult> Index([FromQuery(Name = PageQuery)] uint pageIndex, string? author = null)
+    public async Task<IActionResult> Index([FromQuery(Name = PageQuery)] uint pageIndex, string? title = null,
+        string? content = null, string? author = null)
     {
         var isCallback = Request.Query.ContainsKey(PageQuery);
 
         IQueryable<DbPost> query = db.Posts;
+
+        if (!string.IsNullOrEmpty(title))
+        {
+            isCallback = true;
+            query = query.Where(post => post.Title.Contains(title));
+        }
+
+        if (!string.IsNullOrEmpty(content))
+        {
+            isCallback = true;
+            query = query.Where(post => post.Content!.Contains(content));
+        }
+
         if (!string.IsNullOrEmpty(author))
         {
             isCallback = true;
